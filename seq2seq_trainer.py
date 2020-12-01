@@ -19,7 +19,6 @@ from transformers.optimization import (
 )
 from transformers.trainer_pt_utils import get_tpu_sampler
 
-
 logger = logging.get_logger(__name__)
 
 arg_to_scheduler = {
@@ -49,7 +48,7 @@ class Seq2SeqTrainer(Trainer):
 
         if self.args.label_smoothing != 0 or (self.data_args is not None and self.data_args.ignore_pad_token_for_loss):
             assert (
-                self.config.pad_token_id is not None
+                    self.config.pad_token_id is not None
             ), "Make sure that `config.pad_token_id` is correcly defined when ignoring `pad_token` for loss calculation or doing label smoothing."
 
         if self.config.pad_token_id is None and self.config.eos_token_id is not None:
@@ -61,7 +60,7 @@ class Seq2SeqTrainer(Trainer):
             self.loss_fn = torch.nn.CrossEntropyLoss(ignore_index=self.config.pad_token_id)
         else:
             # dynamically import label_smoothed_nll_loss
-            from utils import label_smoothed_nll_loss
+            from torch.utils import label_smoothed_nll_loss
 
             self.loss_fn = label_smoothed_nll_loss
 
@@ -153,11 +152,11 @@ class Seq2SeqTrainer(Trainer):
         return loss
 
     def prediction_step(
-        self,
-        model: nn.Module,
-        inputs: Dict[str, Union[torch.Tensor, Any]],
-        prediction_loss_only: bool,
-        ignore_keys: Optional[List[str]] = None,
+            self,
+            model: nn.Module,
+            inputs: Dict[str, Union[torch.Tensor, Any]],
+            prediction_loss_only: bool,
+            ignore_keys: Optional[List[str]] = None,
     ) -> Tuple[Optional[float], Optional[torch.Tensor], Optional[torch.Tensor]]:
         """
         Perform an evaluation step on :obj:`model` using obj:`inputs`.
