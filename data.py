@@ -40,11 +40,14 @@ class ERRDataset(Dataset):
         item = {key: torch.tensor(summary_idx[key]) for key in summary_idx}
         item['decoder_input_ids'] = torch.tensor(transcript_idx['input_ids'])
         item['decoder_attention_mask'] = torch.tensor(transcript_idx['attention_mask'])
-        item['labels'] = torch.tensor(transcript_idx['input_ids'].copy())
+        try:
+            item['labels'] = torch.tensor(transcript_idx['input_ids'].copy())
+        except AttributeError:
+            item['labels'] = torch.tensor(transcript_idx['input_ids'].clone())
 
         # because BERT automatically shifts the labels, the labels correspond exactly to `decoder_input_ids`.
         # We have to make sure that the PAD token is ignored
-        item["labels"] = torch.tensor([-100 if token == self.tokenizer.pad_token_id else token for token in item["labels"]])
+
 
         return item
 
